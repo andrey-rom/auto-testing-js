@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { AdBlock } from '../src/utils/index.js';
+import { AdBlock, Randomizer } from '../src/utils/index.js';
 import { MainPage } from '../src/pageObjects/index.js';
+import data from '../config/Constants.js';
 
 test.beforeEach(async ({ page }) => {
   await AdBlock.blockAds(page);
@@ -19,6 +20,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Check navigation', async ({ page }) => {
   const mainPage = await new MainPage(page);
+  const randomColor = Randomizer.randomValueFromArray(data.colors);
   await test.step('Click on "Elements" card', async () => {
     await mainPage.clickCategoryCard('Elements');
   });
@@ -46,5 +48,18 @@ test('Check navigation', async ({ page }) => {
   await test.step('Check "Widgets" section is expanded', async () => {
     const isExpanded = await mainPage.checkSectionIsExpanded('Widgets');
     expect(isExpanded).toBeTruthy();
+  });
+
+  await test.step('Open "Auto Complete" Section', async () => {
+    await mainPage.clickGroupElement('Auto Complete');
+  });
+
+  await test.step('Fill Multiple colors', async () => {
+    await mainPage.selectMultipleColor(randomColor);
+  });
+
+  await test.step('Check selected value', async () => {
+    await mainPage.checkMultipleColorValue(randomColor);
+    console.log(randomColor);
   });
 });

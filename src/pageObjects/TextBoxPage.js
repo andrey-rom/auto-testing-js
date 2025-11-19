@@ -1,5 +1,5 @@
 import { BasePage } from './index.js';
-import { DataStorage, UserCreator } from '../helper/index.js';
+import { expect } from '@playwright/test';
 
 export default class TextBoxPage extends BasePage {
   constructor(page) {
@@ -17,9 +17,7 @@ export default class TextBoxPage extends BasePage {
     this.outputPermanentAddress = page.locator('#output #permanentAddress');
   }
 
-  async fillTextBoxFields(userName, userNumber) {
-    const user = UserCreator.createUser();
-    await DataStorage.setNamespace(userName, userNumber, user);
+  async fillTextBoxFields(user) {
     await this.fullNameInput.fill(user.fullName);
     await this.emailInput.fill(user.email);
     await this.currentAddressTextarea.fill(user.address);
@@ -30,5 +28,13 @@ export default class TextBoxPage extends BasePage {
     const button = this.submitButton;
     await button.waitFor({ state: 'visible' });
     await button.click();
+  }
+
+  async expectedOutputFieldsValues(user) {
+    await expect(this.outputContainer).toBeVisible();
+    await expect(this.outputName).toContainText(user.fullName);
+    await expect(this.outputEmail).toContainText(user.email);
+    await expect(this.outputCurrentAddress).toContainText(user.address);
+    await expect(this.outputPermanentAddress).toContainText(user.addressAnother);
   }
 }

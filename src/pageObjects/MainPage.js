@@ -11,6 +11,10 @@ export default class MainPage extends BasePage {
       page.locator(`//div[contains(text(), "${group}")]/following::div[contains(@class, "element-list")][1]`);
     this.groupHeaderLocator = group =>
       page.locator(`//div[contains(@class, 'header-text') and contains(text(), "${group}")]`);
+    this.groupElementLocator = group => page.locator(`//span[contains(text(), "${group}")]`);
+    this.multiselectField = page.locator('#autoCompleteMultipleContainer input');
+    this.optionInList = option =>
+      page.locator(`//div[contains(text(), "${option}") and contains(@class, "auto-complete__option")]`);
   }
 
   async checkCategoryCard(cardName) {
@@ -37,6 +41,12 @@ export default class MainPage extends BasePage {
     await groupHeader.click();
   }
 
+  async clickGroupElement(elementName) {
+    const groupElementLocator = this.groupElementLocator(elementName);
+    //  await groupElementLocator.waitFor({state: 'visible'});
+    await groupElementLocator.click();
+  }
+
   async checkSectionIsExpanded(element) {
     await this.page.waitForTimeout(500);
     const classAttribute = await this.expandedGroupLocator(element).getAttribute('class');
@@ -46,5 +56,16 @@ export default class MainPage extends BasePage {
     } else {
       console.log('Section is not expanded');
     }
+  }
+
+  async selectMultipleColor(options) {
+    await this.multiselectField.click();
+    await this.multiselectField.fill(options);
+    //  await this.optionInList.waitFor({state: 'visible'});
+    await this.optionInList(options).click();
+  }
+
+  async checkMultipleColorValue(expectedValue) {
+    return this.multiselectField.inputValue().then(value => value.includes(expectedValue));
   }
 }
