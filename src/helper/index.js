@@ -1,4 +1,4 @@
 import DataStorage from './DataStorage.js';
-import UserCreator from './UserCreator.js';
+import UserCreator from './userCreator.js';
 
 export { DataStorage, UserCreator };

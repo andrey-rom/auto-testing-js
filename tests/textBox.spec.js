@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { test } from './fixtures/fillFormFixtures.js';
+import { test } from './fixtures/fillformFixtures.js';
 
 test('Fill text Box scenario', async ({ textBoxPage, storedUser, page }) => {
   const { user } = storedUser;
