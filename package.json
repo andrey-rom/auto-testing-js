@@ -17,10 +17,14 @@
     "lint-staged": "^15.5.0"
   },
   "scripts": {
-    "test": "playwright test",
-    "test-headed": "playwright test --headed",
-    "tets-ui": "npx playwright test --ui",
-    "prettier": "npx prettier --write \"**/*.{js,jsx}\""
+    "test": "playwright test && node scripts/fix-paths.js",
+    "test-headed": "playwright test --headed && node scripts/fix-paths.js",
+    "test-ui": "npx playwright test --ui",
+    "test:chrome": "playwright test --project=chromium && node scripts/fix-paths.js",
+    "test:firefox": "playwright test --project=firefox && node scripts/fix-paths.js",
+    "test:all-browsers": "playwright test --project=chromium --project=firefox && node scripts/fix-paths.js",
+    "prettier": "npx prettier --write \"**/*.{js,jsx}\"",
+    "fix-paths": "node scripts/fix-paths.js"
   },
   "repository": {
     "type": "git",

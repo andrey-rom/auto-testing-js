@@ -1,0 +1,56 @@
+Use JS/TS to accomplish  
+
+
+1. Select a Framework.
+
+
+2. Use https://demoqa.com/ web application. Write 5 Test Scenarios:
+2.1 https://demoqa.com/alerts. Cover functionality with all buttons. Check alerts.
+2.2 https://demoqa.com/automation-practice-form. Fill all fields. Check result.
+2.3 https://demoqa.com/text-box. Fill text box with random data. Check result
+2.4 https://demoqa.com/tool-tips. Сheck text on all tooltips.
+2.5 https://demoqa.com/select-menu. Cover functionality with dropdowns. Select Value - Group 2, option 1. Select One - Other. Old Style Select Menu - Green. Multiselect drop down - Black, Blue.
+
+
+3. Implement Page Object Model:
+Create separate files/classes for each page (e.g. `MainPage.js`, `FormPage.js`).
+In each file, define methods for interacting with page elements (e.g. `clickButton()`, `fillForm()`)
+4. Perform Cross-Browser Testing - Google Chrome and Mozilla Firefox
+5. Error Handling. Set up automatic screenshot saving for tests that fail.
+6. Set up reporting for tests.
+7. Give the lecturer access rights to the git repository.
+8. Tests cases 2.2 and 2.3 should contain mandatory field validation. All tests should have negative scenarios.
+
+
+Milestones:
+
+
+    Milestone 1. 
+The project is set up, the basic POM structure is implemented.
+Tests for two scenarios (2.1 and 2.2) are written and successfully run.
+Tests are run in Google Chrome.
+
+
+    Milestone 2. 
+
+
+All 5 test scenarios are implemented and run successfully.
+Tests are run in Google Chrome and Mozilla Firefox.
+Error handling is enabled (saving screenshots).
+Tests are checked on two screen resolutions.
+
+
+Acceptance Criteria:
+- The project is configured using one of the selected frameworks (WebdriverIO, Cypress or Playwright).
+- At least 5 test scenarios are written, each using different locator strategies.
+- Tests are organized using the Page Object Model.
+- Parameterized tests with multiple data sets are used.
+- Tests are run automatically via CI/CD (e.g. GitHub Actions). Every day and by merge (pull) request.
+- Tests run successfully in Chrome and Firefox.
+- Test run with resolutions 1920x1080 and 1366x768. Launch by flags `VIEWPORT_WIDTH` and `VIEWPORT_HEIGHT`.
+- The tests are configured to run in parallel. Launch by flag `workers`.
+- Any separate test scenario are configured to run by keyword. Launch by flag `runThis`.
+- Test scenarios contain only automatically generated data.
+- Screenshots are automatically saved in case of errors.
+- A detailed report on the results of test execution is generated and saving as an artifact in github.
+- The README file contains a description of how to run automated tests.

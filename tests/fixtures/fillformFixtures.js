@@ -1,13 +1,18 @@
 import { TextBoxPage } from '../../src/pageObjects/index.js';
 import { AdBlock } from '../../src/utils/index.js';
-import { expect, test as base } from '@playwright/test';
+import { test as base } from '@playwright/test';
 import { DataStorage, UserCreator } from '../../src/helper/index.js';
 
 export const test = base.extend({
   textBoxPage: async ({ page }, use) => {
     await AdBlock.blockAds(page);
-    await page.goto('https://demoqa.com/text-box', { waitUntil: 'domcontentloaded' });
+    await page.goto('https://demoqa.com/text-box', { 
+      waitUntil: 'domcontentloaded',
+      timeout: 120000 
+    });
     const textBox = new TextBoxPage(page);
+    await textBox.fullNameInput.waitFor({ state: 'visible', timeout: 60000 });
+    await page.waitForTimeout(500);
 
     await use(textBox);
   },
@@ -20,11 +25,5 @@ export const test = base.extend({
     DataStorage.setNamespace(namespace, userNumber, user);
 
     await use({ namespace, userNumber, user });
-  },
-
-  expectedOutputFieldsValues: async ({}, use) => {
-    await use(async user => {
-      await expect(textBox.outputSection).toContainText(user.fullName);
-    });
   },
 });

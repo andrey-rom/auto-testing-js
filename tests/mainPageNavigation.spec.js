@@ -5,7 +5,9 @@ import data from '../config/Constants.js';
 
 test.beforeEach(async ({ page }) => {
   await AdBlock.blockAds(page);
-  await page.goto('https://demoqa.com', { waitUntil: 'domcontentloaded' });
+  await page.goto('https://demoqa.com', { waitUntil: 'load', timeout: 90000 });
+  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(500);
 });
 
 /**

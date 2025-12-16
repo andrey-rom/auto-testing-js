@@ -25,13 +25,13 @@ export default class MainPage extends BasePage {
 
   async clickCategoryCard(category) {
     const card = this.categoryCardLocator(category);
-    await card.waitFor({ state: 'visible' });
+    await card.waitFor({ state: 'visible', timeout: 90000 });
     await card.click();
   }
 
   async clickOnElementCardList(element) {
     const elementInList = this.listElement(element);
-    await elementInList.waitFor({ state: 'visible' });
+    await elementInList.waitFor({ state: 'visible', timeout: 90000 });
     await elementInList.click();
   }
 
@@ -43,7 +43,6 @@ export default class MainPage extends BasePage {
 
   async clickGroupElement(elementName) {
     const groupElementLocator = this.groupElementLocator(elementName);
-    //  await groupElementLocator.waitFor({state: 'visible'});
     await groupElementLocator.click();
   }
 
@@ -61,7 +60,6 @@ export default class MainPage extends BasePage {
   async selectMultipleColor(options) {
     await this.multiselectField.click();
     await this.multiselectField.fill(options);
-    //  await this.optionInList.waitFor({state: 'visible'});
     await this.optionInList(options).click();
   }
 

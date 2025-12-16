@@ -18,9 +18,13 @@ export default class TextBoxPage extends BasePage {
   }
 
   async fillTextBoxFields(user) {
+    await this.fullNameInput.waitFor({ state: 'visible', timeout: 90000 });
     await this.fullNameInput.fill(user.fullName);
+    await this.emailInput.waitFor({ state: 'visible', timeout: 90000 });
     await this.emailInput.fill(user.email);
+    await this.currentAddressTextarea.waitFor({ state: 'visible', timeout: 90000 });
     await this.currentAddressTextarea.fill(user.address);
+    await this.permanentAddressTextarea.waitFor({ state: 'visible', timeout: 90000 });
     await this.permanentAddressTextarea.fill(user.addressAnother);
   }
 

@@ -44,6 +44,9 @@ class AdBlock {
         route.continue();
       }
     });
+    await page.setExtraHTTPHeaders({
+      'Accept-Language': 'en-US,en;q=0.9',
+    });
   }
 }
 

@@ -268,3 +268,8 @@ junit.xml
 
 # Playwright
 /playwright/.auth/
+test-results.json
+test-results.xml
+
+# Nested directories
+auto-testing-js/

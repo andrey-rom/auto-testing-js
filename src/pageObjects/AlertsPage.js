@@ -1,4 +1,5 @@
 import { BasePage } from './index.js';
+import { expect } from '@playwright/test';
 
 export default class AlertsPage extends BasePage {
   constructor(page) {
@@ -8,6 +9,8 @@ export default class AlertsPage extends BasePage {
       alertButton: page.locator('#alertButton'),
       confirmButton: page.locator('#confirmButton'),
       promptButton: page.locator('#promtButton'),
+      confirmResult: page.locator('#confirmResult'),
+      promptResult: page.locator('#promptResult'),
     };
   }
 
@@ -15,5 +18,13 @@ export default class AlertsPage extends BasePage {
     const button = this.selectors[buttonSelector];
     await button.waitFor({ state: 'visible' });
     await button.click();
+  }
+
+  async verifyConfirmResult(expectedText) {
+    await expect(this.selectors.confirmResult).toContainText(expectedText);
+  }
+
+  async verifyPromptResult(expectedText) {
+    await expect(this.selectors.promptResult).toContainText(expectedText);
   }
 }
