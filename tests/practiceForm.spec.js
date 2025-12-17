@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { MainPage, PracticeFormPage } from '../src/pageObjects';
 import { UserCreator } from '../src/helper';
 import { AdBlock } from '../src/utils';
-
+// TODO: Create method fillMandatory fields in PracticeFormPage and use it Use random data generator. Do not hardcode values
 test.beforeEach(async ({ page }) => {
   await AdBlock.blockAds(page);
   await page.goto('https://demoqa.com', { waitUntil: 'load', timeout: 90000 });

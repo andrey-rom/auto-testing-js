@@ -1,6 +1,6 @@
 import { BasePage } from './index.js';
 import { expect } from '@playwright/test';
-
+// TODO Remove all fixed timeouts. Use explicit assertions and waits for visibility and values. Verify that the date format is compatible.
 export default class PracticeFormPage extends BasePage {
   constructor(page) {
     super(page);
@@ -11,9 +11,11 @@ export default class PracticeFormPage extends BasePage {
     this.mobileInput = page.locator('#userNumber');
     this.dateOfBirthInput = page.locator('#dateOfBirthInput');
     this.currentAddressTextarea = page.locator('#currentAddress');
+    //TODO: Refactor hobbies locators to a single method with parameter
     this.genderMale = page.locator('input[value="Male"]');
     this.genderFemale = page.locator('input[value="Female"]');
     this.genderOther = page.locator('input[value="Other"]');
+    //TODO: Refactor hobbies locators to a single method with parameter
     this.hobbiesSports = page.locator('input[id="hobbies-checkbox-1"]');
     this.hobbiesReading = page.locator('input[id="hobbies-checkbox-2"]');
     this.hobbiesMusic = page.locator('input[id="hobbies-checkbox-3"]');
