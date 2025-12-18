@@ -1,69 +1,61 @@
 import BasePage from './BasePage.js';
+import TimeoutConfig from '../../config/TimeoutConfig.js';
 
 export default class MainPage extends BasePage {
   constructor(page) {
     super(page);
     this.headerLocator = page.locator('header');
-    this.categoryCardLocator = cardName =>
-      page.locator(`//div[contains(@class, "card")]//*[contains(text(), "${cardName}")]`);
-    this.listElement = element => page.locator(`//span[contains(text(), "${element}")]`);
-    this.expandedGroupLocator = group =>
-      page.locator(`//div[contains(text(), "${group}")]/following::div[contains(@class, "element-list")][1]`);
-    this.groupHeaderLocator = group =>
-      page.locator(`//div[contains(@class, 'header-text') and contains(text(), "${group}")]`);
-    this.groupElementLocator = group => page.locator(`//span[contains(text(), "${group}")]`);
     this.multiselectField = page.locator('#autoCompleteMultipleContainer input');
-    this.optionInList = option =>
-      page.locator(`//div[contains(text(), "${option}") and contains(@class, "auto-complete__option")]`);
+    this.multiValueLabel = page.locator('.auto-complete__multi-value__label');
   }
 
-  async checkCategoryCard(cardName) {
-    const card = this.categoryCardLocator(cardName);
-    await this.waitForElementVisible(card);
-    await this.isElementVisible(card);
+  getCategoryCard(cardName) {
+    return this.page.locator('.card', { hasText: cardName });
+  }
+
+  getSectionHeader(groupName) {
+    return this.page.locator('.header-text', { hasText: groupName });
+  }
+
+  getSectionBody(groupName) {
+    return this.page.locator('.element-group', { hasText: groupName }).locator('.element-list');
+  }
+
+  getOptionInList(option) {
+    return this.page.locator('.auto-complete__option', { hasText: option });
   }
 
   async clickCategoryCard(category) {
-    const card = this.categoryCardLocator(category);
-    await card.waitFor({ state: 'visible', timeout: 90000 });
+    const card = this.getCategoryCard(category);
+    await card.scrollIntoViewIfNeeded();
     await card.click();
   }
 
   async clickOnElementCardList(element) {
-    const elementInList = this.listElement(element);
-    await elementInList.waitFor({ state: 'visible', timeout: 90000 });
+    const elementInList = this.page.locator('li', { hasText: element });
+    await elementInList.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
     await elementInList.click();
   }
 
   async clickGroupHeader(groupName) {
-    const groupHeader = this.groupHeaderLocator(groupName);
-    await groupHeader.waitFor({ state: 'visible' });
+    const groupHeader = this.getSectionHeader(groupName);
+    await groupHeader.scrollIntoViewIfNeeded();
     await groupHeader.click();
   }
 
   async clickGroupElement(elementName) {
-    const groupElementLocator = this.groupElementLocator(elementName);
-    await groupElementLocator.click();
+    const groupElement = this.page.locator('span', { hasText: elementName });
+    await groupElement.scrollIntoViewIfNeeded();
+    await groupElement.click();
   }
 
-  async checkSectionIsExpanded(element) {
-    await this.page.waitForTimeout(500);
-    const classAttribute = await this.expandedGroupLocator(element).getAttribute('class');
-    if (classAttribute.includes('collapse') && classAttribute.includes('show')) {
-      console.log('Section is expanded');
-      return true;
-    } else {
-      console.log('Section is not expanded');
-    }
-  }
-
-  async selectMultipleColor(options) {
-    await this.multiselectField.click();
-    await this.multiselectField.fill(options);
-    await this.optionInList(options).click();
+  async selectMultipleColor(option) {
+    await this.multiselectField.fill(option);
+    const optionToSelect = this.getOptionInList(option);
+    await optionToSelect.click();
   }
 
   async checkMultipleColorValue(expectedValue) {
-    return this.multiselectField.inputValue().then(value => value.includes(expectedValue));
+    await this.multiValueLabel.filter({ hasText: expectedValue }).waitFor({ state: 'visible' });
   }
 }

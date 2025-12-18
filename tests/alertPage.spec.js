@@ -1,12 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { AlertsPage, MainPage } from '../src/pageObjects';
 import { AdBlock } from '../src/utils';
+import TimeoutConfig from '../config/TimeoutConfig.js';
 
 test.beforeEach(async ({ page }) => {
   await AdBlock.blockAds(page);
-  await page.goto('https://demoqa.com', { waitUntil: 'load', timeout: 90000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(500);
+  await page.goto('https://demoqa.com', { waitUntil: 'domcontentloaded', timeout: TimeoutConfig.PAGE_LOAD });
+  // Wait for main page header to be visible instead of networkidle
+  const header = page.locator('header');
+  await header.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
 });
 
 test.describe('Check Alert Page', async () => {
@@ -17,6 +19,8 @@ test.describe('Check Alert Page', async () => {
     await test.step('Navigate to Alerts page', async () => {
       await mainPage.clickCategoryCard('Alerts, Frame & Windows');
       await mainPage.clickOnElementCardList('Alerts');
+      // Wait for the alerts page to load - ensure alert button is visible
+      await alertPage.selectors.alertButton.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
     });
 
     await test.step('Handle simple alert', async () => {
@@ -64,8 +68,8 @@ test.describe('Check Alert Page', async () => {
         await dialog.dismiss();
       });
       await alertPage.clickAlertButtonByType('promptButton');
-      await page.waitForTimeout(1000);
-      const resultExists = await alertPage.selectors.promptResult.isVisible().catch(() => false);
+      // Wait for result element to appear or verify it doesn't exist
+      const resultExists = await alertPage.selectors.promptResult.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY }).catch(() => false);
       if (resultExists) {
         const resultText = await alertPage.selectors.promptResult.textContent();
         expect(resultText).not.toContain('You entered');

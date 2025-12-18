@@ -2,12 +2,14 @@ import { test, expect } from '@playwright/test';
 import { MainPage, PracticeFormPage } from '../src/pageObjects';
 import { UserCreator } from '../src/helper';
 import { AdBlock } from '../src/utils';
+import TimeoutConfig from '../config/TimeoutConfig.js';
 
 test.beforeEach(async ({ page }) => {
   await AdBlock.blockAds(page);
-  await page.goto('https://demoqa.com', { waitUntil: 'load', timeout: 90000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(500);
+  await page.goto('https://demoqa.com', { waitUntil: 'domcontentloaded', timeout: TimeoutConfig.PAGE_LOAD });
+  // Wait for main page header to be visible instead of networkidle
+  const header = page.locator('header');
+  await header.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
 });
 
 test.describe('Practice Form Tests', () => {
@@ -19,23 +21,18 @@ test.describe('Practice Form Tests', () => {
     await test.step('Navigate to Practice Form page', async () => {
       await mainPage.clickCategoryCard('Forms');
       await mainPage.clickOnElementCardList('Practice Form');
+      // Wait for the form page to load - ensure firstName input is visible
+      await formPage.firstNameInput.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
     });
 
     await test.step('Fill all form fields', async () => {
-      await formPage.fillFirstName(user.firstName);
-      await formPage.fillLastName(user.lastName);
-      await formPage.fillEmail(user.email);
-      await formPage.selectGender('Male');
-      await formPage.fillMobile('1234567890');
-      await formPage.fillDateOfBirth('15 May 1990');
-      await formPage.selectSubject('Maths');
-      await formPage.selectHobbies(['Sports', 'Reading']);
+      await formPage.fillMandatoryFields(user);
+      await formPage.fillDateOfBirth(user.dateOfBirth);
+      await formPage.selectSubject(user.subject);
+      await formPage.selectHobbies(user.hobbies);
       await formPage.fillCurrentAddress(user.address);
-      await page.waitForTimeout(500);
-      await formPage.selectState('NCR');
-      await page.waitForTimeout(500);
-      await formPage.selectCity('Delhi');
-      await page.waitForTimeout(500);
+      await formPage.selectState(user.state);
+      await formPage.selectCity(user.city);
     });
 
     await test.step('Submit form', async () => {
@@ -49,13 +46,13 @@ test.describe('Practice Form Tests', () => {
     await test.step('Verify all submitted values in result', async () => {
       await formPage.verifyResultField('Student Name', `${user.firstName} ${user.lastName}`);
       await formPage.verifyResultField('Student Email', user.email);
-      await formPage.verifyResultField('Gender', 'Male');
-      await formPage.verifyResultField('Mobile', '1234567890');
-      await formPage.verifyResultField('Date of Birth', '15 May,1990');
-      await formPage.verifyResultField('Subjects', 'Maths');
-      await formPage.verifyResultField('Hobbies', 'Sports, Reading');
+      await formPage.verifyResultField('Gender', user.gender);
+      await formPage.verifyResultField('Mobile', user.mobile);
+      await formPage.verifyResultField('Date of Birth', user.dateOfBirthForVerification);
+      await formPage.verifyResultField('Subjects', user.subject);
+      await formPage.verifyResultField('Hobbies', user.hobbies.join(', '));
       await formPage.verifyResultField('Address', user.address);
-      await formPage.verifyResultField('State and City', 'NCR Delhi');
+      await formPage.verifyResultField('State and City', `${user.state} ${user.city}`);
     });
 
     await test.step('Close result modal', async () => {
@@ -94,6 +91,8 @@ test.describe('Practice Form Tests', () => {
     await test.step('Navigate to Practice Form page', async () => {
       await mainPage.clickCategoryCard('Forms');
       await mainPage.clickOnElementCardList('Practice Form');
+      // Wait for the form page to load - ensure email input is visible
+      await formPage.emailInput.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
     });
 
     await test.step('Fill invalid email', async () => {

@@ -1,25 +1,40 @@
 import { test, expect } from '@playwright/test';
 import { MainPage } from '../src/pageObjects';
+import TimeoutConfig from '../config/TimeoutConfig.js';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('https://demoqa.com', { waitUntil: 'load', timeout: 90000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(500);
+  await page.goto('https://demoqa.com', {
+    waitUntil: 'domcontentloaded',
+    timeout: TimeoutConfig.PAGE_LOAD
+  });
+
+  const header = page.locator('header');
+  await header.waitFor({
+    state: 'visible',
+    timeout: TimeoutConfig.ELEMENT_VISIBILITY
+  });
 });
+
 test.describe('Main', () => {
-  test('Has header banner', async ({ page }) => {
+  test('Has header banner and category cards', async ({ page }) => {
     const mainPage = new MainPage(page);
-    const headerBanner = mainPage.headerLocator;
-    await expect(headerBanner).toBeVisible();
+
+    // Check Header
+    await expect(mainPage.headerLocator).toBeVisible();
 
     await test.step('Elements Card visible in main page', async () => {
-      await mainPage.checkCategoryCard('Elements');
+      const card = mainPage.getCategoryCard('Elements');
+      await expect(card).toBeVisible();
     });
+
     await test.step('Forms Card visible in main page', async () => {
-      await mainPage.checkCategoryCard('Forms');
+      const card = mainPage.getCategoryCard('Forms');
+      await expect(card).toBeVisible();
     });
+
     await test.step('Widgets Card visible in main page', async () => {
-      await mainPage.checkCategoryCard('Widgets');
+      const card = mainPage.getCategoryCard('Widgets');
+      await expect(card).toBeVisible();
     });
   });
 });

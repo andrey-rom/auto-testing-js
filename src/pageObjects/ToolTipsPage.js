@@ -1,5 +1,6 @@
 import { BasePage } from './index.js';
 import { expect } from '@playwright/test';
+import TimeoutConfig from '../../config/TimeoutConfig.js';
 
 export default class ToolTipsPage extends BasePage {
   constructor(page) {
@@ -12,30 +13,36 @@ export default class ToolTipsPage extends BasePage {
   }
 
   async hoverOverButton() {
+    await this.hoverMeButton.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
     await this.hoverMeButton.hover();
-    await this.page.waitForTimeout(500);
+    // Wait for tooltip to appear
+    await this.tooltip.waitFor({ state: 'visible', timeout: TimeoutConfig.TOOLTIP });
   }
 
   async hoverOverInput() {
+    await this.hoverMeInput.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
     await this.hoverMeInput.hover();
-    await this.page.waitForTimeout(500);
+    // Wait for tooltip to appear
+    await this.tooltip.waitFor({ state: 'visible', timeout: TimeoutConfig.TOOLTIP });
   }
 
   async hoverOverLink() {
+    await this.hoverMeLink.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
     await this.hoverMeLink.hover();
-    await this.page.waitForTimeout(500);
+    // Wait for specific tooltip to appear (filter by expected text to avoid strict mode violation)
+    const linkTooltip = this.tooltip.filter({ hasText: 'Contrary' });
+    await linkTooltip.waitFor({ state: 'visible', timeout: TimeoutConfig.TOOLTIP });
   }
 
   async verifyTooltipText(expectedText) {
     const tooltipLocator = this.page.locator('.tooltip-inner').filter({ hasText: expectedText });
-    await tooltipLocator.waitFor({ state: 'visible', timeout: 5000 });
+    await tooltipLocator.waitFor({ state: 'visible', timeout: TimeoutConfig.TOOLTIP });
     await expect(tooltipLocator).toBeVisible();
     await expect(tooltipLocator).toContainText(expectedText);
   }
 
   async getTooltipText() {
-    await this.tooltip.waitFor({ state: 'visible' });
+    await this.tooltip.waitFor({ state: 'visible', timeout: TimeoutConfig.TOOLTIP });
     return await this.tooltip.textContent();
   }
 }
-

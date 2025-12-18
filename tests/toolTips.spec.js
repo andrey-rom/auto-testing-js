@@ -1,12 +1,14 @@
 import { test } from '@playwright/test';
 import { MainPage, ToolTipsPage } from '../src/pageObjects';
 import { AdBlock } from '../src/utils';
+import TimeoutConfig from '../config/TimeoutConfig.js';
 
 test.beforeEach(async ({ page }) => {
   await AdBlock.blockAds(page);
-  await page.goto('https://demoqa.com', { waitUntil: 'load', timeout: 90000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(500);
+  await page.goto('https://demoqa.com', { waitUntil: 'domcontentloaded', timeout: TimeoutConfig.PAGE_LOAD });
+  // Wait for main page header to be visible instead of networkidle
+  const header = page.locator('header');
+  await header.waitFor({ state: 'visible', timeout: TimeoutConfig.ELEMENT_VISIBILITY });
 });
 
 test.describe('Tool Tips Tests', () => {
@@ -35,4 +37,3 @@ test.describe('Tool Tips Tests', () => {
     });
   });
 });
-
