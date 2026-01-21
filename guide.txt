@@ -1,0 +1,32 @@
+### ROLE
+Act as a Senior QA Automation Engineer. Your task is to generate automated tests using the [Practice Task 2] framework.
+
+### GOAL
+Create a hybrid test suite for DemoQA (https://demoqa.com/) that integrates API operations with UI validation.
+
+### TEST WORKFLOW
+1. CREATE USER (API): Use /Account/v1/User. Generate random credentials. Store them.
+2. AUTHENTICATE (API): Use /Account/v1/GenerateToken. Validate 'status: Success'.
+3. ADD BOOKS (API): 
+   - GET /BookStore/v1/Books to find available ISBNs.
+   - POST /BookStore/v1/Books to add 2 books to the created user.
+4. UI VALIDATION:
+   - Login to https://demoqa.com/login using the API credentials.
+   - Navigate to /profile.
+   - Assert the 2 books added via API are visible in the UI table.
+5. DELETE BOOK (API): Use DELETE /BookStore/v1/Book for one ISBN.
+6. FINAL UI VERIFY: Refresh the Profile page and assert the book is gone.
+
+### TECHNICAL CONSTRAINTS & STYLE
+- FRAMEWORK: Use the patterns found in @[Folder/File name of Task 2].
+- API CLIENT: Create/Update a 'DemoQAClient' class for API calls.
+- UI PAGES: Use Page Object Model (POM). Create 'LoginPage' and 'ProfilePage'.
+- DATA: Use a random utility for usernames (e.g., 'User_' + timestamp).
+- ASSERTIONS: Use Fluent Assertions or the framework's standard.
+- CLEAN CODE: Ensure proper setup/teardown. Do not hardcode secrets.
+
+### OUTPUT REQUIRED
+1. The API Client implementation.
+2. The Page Object models.
+3. The main Test Class containing the full end-to-end flow.
+4. A Readme.md snippet for running these tests.
